@@ -49,20 +49,22 @@ object GoL {
     if (m.isEmpty) 0 else m.max
   }
 
-  def tick(c: Set[(Int, Int)]): Set[(Int, Int)] = {
+  def tick(c: Set[(Int, Int)]): (Set[(Int, Int)], Set[(Int, Int)]) = {
 
     // check the entire field between min and max x & y
-    var cc = c
+//    var cc = c
+    var deceased: Set[(Int, Int)] = Set()
+    var born: Set[(Int, Int)] = Set()
     var next: Option[Symbol] = None
     for( x <- (minX(c) to maxX(c)).toList; y <- (minY(c) to maxY(c)).toList) {
 
       next = nextState(countNeighbors(c, x, y))
-      cc = next match {
-        case None => cc
-        case Some(v: Symbol) => if('dead == v) cc - (x -> y) else cc + (x -> y)
+      next match {
+        case None =>
+        case Some(v: Symbol) => if('dead == v) deceased += (x -> y) else born += (x -> y)
       }
     }
-    cc
+    (deceased, born)
   }
 
   def isAlive(c: Set[(Int, Int)], x: Int, y: Int): Boolean = {

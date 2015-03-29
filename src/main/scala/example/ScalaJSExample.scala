@@ -5,6 +5,7 @@ import org.scalajs.dom.html
 import scala.scalajs.js
 import js.annotation.JSExport
 import org.scalajs.dom
+import example.Renderer
 
 object ScalaJSExample extends js.JSApp {
   def main(): Unit = {
@@ -22,21 +23,15 @@ object ScalaJSExample extends js.JSApp {
 
     var cells: Set[(Int, Int)] = Set(locations.toSeq: _*)// Set((1, 1), (1, 2), (2, 2), (3, 3), (4, 4), (5, 6), (12, 15), (3, 6), (3, 7), (3, 8))
 
-    dom.setInterval(() => {
-      Page.clear()
-      Page.renderer.fillStyle = s"rgb(80, 180, 10)"
-      cells = GoL.tick(cells)
+    Page.clear()
 
+    dom.setInterval(() => {
+      val (deceased, born) = GoL.tick(cells)
+      cells = cells -- deceased ++ born
 //      dom.console.log(s"cells: $cells")
 
-      for(cell <- cells){
-        Page.renderer.fillRect(cell._1*tile, cell._2*tile, tile - 1, tile - 1)
-      }
+//      renderDiff(born, deceased)
+      Renderer.renderFull(cells, tile)
     }, 200)
   }
-
-  /** Computes the square of an integer.
-   *  This demonstrates unit testing.
-   */
-  def square(x: Int): Int = x*x
 }
