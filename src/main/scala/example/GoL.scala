@@ -10,65 +10,45 @@ object GoL {
     if (x != 0 || y != 0)
   } yield (x -> y)
 
-  def nextState(i: Int): Option[Symbol] = {
-    if (3 == i) Some('alive) else if (2 == i) None else Some('dead)
-  }
+  val rules = Map(3 -> Some('alive), 2 -> None).withDefaultValue(Some('dead))
 
   def countNeighbors(c: Set[(Int, Int)], x: Int, y: Int): Int = {
-    val n = neighborIndices(x, y)
-    n.filter(c.contains(_)).length
+    neighborIndices(x, y).filter(c.contains(_)).length
   }
 
   def neighborIndices(x: Int, y: Int): IndexedSeq[(Int, Int)] = {
-    neighborOffsets map {(a) => ((a._1 + x) -> (a._2 + y))}
+    neighborOffsets map { (a) => ((a._1 + x) -> (a._2 + y)) }
   }
 
-  def max(xs: List[Int]): Option[Int] = xs match {
-    case Nil => None
-    case List(x: Int) => Some(x)
-    case x :: y :: rest => max( (if (x > y) x else y) :: rest )
+  def mapToLoc(e: ((Int, Int), Some[Symbol])): (Int, Int) = (e._1)
+
+  def willBe(state: Symbol): PartialFunction[((Int, Int), Option[Symbol]), (Int, Int)] = {
+    case p: ((Int, Int), Some[Symbol]) if state == p._2 => mapToLoc(p)
   }
 
-  def minX(c: Set[(Int, Int)]): Int = {
-    val m = c.map { (a) => a._1 }
-    if (m.isEmpty) 0 else m.min
+  def isInState(state: Symbol)(cell: ((Int, Int), Option[Symbol])) = {
+    ((s: Symbol) => s == cell._2.get)(state)
   }
 
-  def maxX(c: Set[(Int, Int)]): Int = {
-    val m = c.map{(a) => a._1}
-    if (m.isEmpty) 0 else m.max
-  }
-
-  def minY(c: Set[(Int, Int)]): Int = {
-    val m = c.map{(a) => a._2}
-    if (m.isEmpty) 0 else m.min
-  }
-
-  def maxY(c: Set[(Int, Int)]): Int = {
-    val m = c.map{(a) => a._2}
-    if (m.isEmpty) 0 else m.max
-  }
-
-  def tick(c: Set[(Int, Int)]): (Set[(Int, Int)], Set[(Int, Int)]) = {
-
-    // check the entire field between min and max x & y
-//    var cc = c
-    var deceased: Set[(Int, Int)] = Set()
-    var born: Set[(Int, Int)] = Set()
-    var next: Option[Symbol] = None
-    for( x <- (minX(c) to maxX(c)).toList; y <- (minY(c) to maxY(c)).toList) {
-
-      next = nextState(countNeighbors(c, x, y))
-      next match {
-        case None =>
-        case Some(v: Symbol) => if('dead == v) deceased += (x -> y) else born += (x -> y)
-      }
+  def tick(c: Set[(Int, Int)]): Set[(Int, Int)] = {
+    val nextStates: Set[((Int, Int), Option[Symbol])] = locationsToCheck(c).map {
+      (loc) => (loc -> rules(countNeighbors(c, loc._1, loc._2)))
     }
-    (deceased, born)
+    val deceased: Set[(Int, Int)] = nextStates filter (isInState('dead)) map (_._1)
+    val born = nextStates filter (isInState('dead)) map (_._1)
+    //        val deceased = nextStates collect willBe('dead)(_)
+    //        val born = nextStates collect willBe('alive)
+    c -- deceased ++ born
   }
 
-  def isAlive(c: Set[(Int, Int)], x: Int, y: Int): Boolean = {
-    c.contains(x -> y)
+  // TODO - use the neighborhood of all cells - would it be more practical?
+  def locationsToCheck(c: Set[(Int, Int)]): Set[(Int, Int)] = {
+    val allX = c.map(_._1)
+    val allY = c.map(_._2)
+    (for {
+      x <- (allX.min to allX.max)
+      y <- (allY.min to allY.max)
+    } yield (x -> y)).toSet
   }
 
 }
