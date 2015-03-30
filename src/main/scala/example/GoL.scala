@@ -20,25 +20,18 @@ object GoL {
     neighborOffsets map { (a) => ((a._1 + x) -> (a._2 + y)) }
   }
 
-  def mapToLoc(e: ((Int, Int), Some[Symbol])): (Int, Int) = (e._1)
 
-  def willBe(state: Symbol): PartialFunction[((Int, Int), Option[Symbol]), (Int, Int)] = {
-    case p: ((Int, Int), Some[Symbol]) if state == p._2 => mapToLoc(p)
-  }
+  val toLoc: ( ((Int, Int), Option[Symbol])) => (Int, Int) = (_._1)
 
-  def isInState(state: Symbol)(cell: ((Int, Int), Option[Symbol])) = {
-    ((s: Symbol) => s == cell._2.get)(state)
-  }
+  def isInState(state: Symbol)(cell: ((Int, Int), Option[Symbol])) = (((s: Symbol) => s == cell._2.get)(state))
 
-  def tick(c: Set[(Int, Int)]): Set[(Int, Int)] = {
+  def tick(c: Set[(Int, Int)]): (Set[(Int, Int)], Set[(Int, Int)]) = {
     val nextStates: Set[((Int, Int), Option[Symbol])] = locationsToCheck(c).map {
       (loc) => (loc -> rules(countNeighbors(c, loc._1, loc._2)))
-    }
-    val deceased: Set[(Int, Int)] = nextStates filter (isInState('dead)) map (_._1)
-    val born = nextStates filter (isInState('dead)) map (_._1)
-    //        val deceased = nextStates collect willBe('dead)(_)
-    //        val born = nextStates collect willBe('alive)
-    c -- deceased ++ born
+    } filter (_._2.isDefined)
+    val deceased: Set[(Int, Int)] = nextStates filter isInState('dead) map toLoc
+    val born: Set[(Int, Int)] = nextStates filter isInState('alive) map toLoc
+    (deceased, born)
   }
 
   // TODO - use the neighborhood of all cells - would it be more practical?
