@@ -1,7 +1,9 @@
 ## A simple Game of Life implementation written in Scala.js
 
-This is a barebone example of an application written in
-[Scala.js](https://www.scala-js.org/).
+
+
+This is a simple [Game of Life]() implementation written in
+[Scala.js](https://www.scala-js.org/), using the [scala-js-example-app](https://github.com/sjrd/scala-js-example-app).
 
 ## Get started
 
@@ -27,3 +29,10 @@ seconds to execute, so typically you only use this for the final, production
 version of your application. While `index-fastopt.html` refers to the
 JavaScript emitted by `fastOptJS`, `index.html` refers to the optimized
 JavaScript emitted by `fullOptJS`.
+
+## Todo
+
+* cells change color with age
+* check only cells and their immediate neighborhood, not the entire min-max range
+* switch rules on key press
+* timing/benchmarking
