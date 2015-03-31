@@ -1,4 +1,4 @@
-# Example application written in Scala.js
+## A simple Game of Life implementation written in Scala.js
 
 This is a barebone example of an application written in
 [Scala.js](https://www.scala-js.org/).

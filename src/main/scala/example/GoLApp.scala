@@ -1,5 +1,7 @@
 package example
 
+import org.scalajs.dom.html
+
 import scala.scalajs.js
 import org.scalajs.dom
 
@@ -7,42 +9,42 @@ object GoLApp extends js.JSApp {
   def main(): Unit = {
 
     val (h, w) = (Page.canvas.height, Page.canvas.width)
-    val tile = 10
-    val mag = 1/tile
-    val tilesX = w/tile
-    val tilesY = h/tile
+    val tileSize = 10
+    val tilesX = w / tileSize
+    val tilesY = h / tileSize
 
     var run = true
+    val spaceAction = Util.getElem[html.Paragraph]("spaceAction")
 
-    dom.onkeyup = (e: dom.KeyboardEvent) => {
-      if(e.keyCode == 32)
-        run = !run
-        dom.console.log(if (run) "running" else "paused")
-    }
-
-//    dom.onmouseover = (e: dom.MouseEvent) => {
-//      dom.console.log(e)
-//    }
+    var frame = 0
+    val frameCount = Util.getElem[html.Paragraph]("frameCount")
 
     def createRandomCells = {
       val rnd = new scala.util.Random
-      val locations = (0 to (tilesX*tilesY)).toList.map{(_) => (rnd.nextInt(tilesX.toInt), rnd.nextInt(tilesY.toInt))}
+      val locations = (0 to (tilesX * tilesY)).toList.map { (_) => (rnd.nextInt(tilesX.toInt), rnd.nextInt(tilesY.toInt)) }
       Set(locations.toSeq: _*)
     }
 
-    var cells: Set[(Int, Int)] = createRandomCells// Set((1, 1), (1, 2), (2, 2), (3, 3), (4, 4), (5, 6), (12, 15), (3, 6), (3, 7), (3, 8))
+    var cells: Set[(Int, Int)] = createRandomCells // Set((1, 1), (1, 2), (2, 2), (3, 3), (4, 4), (5, 6), (12, 15), (3, 6), (3, 7), (3, 8))
 
     Page.clear()
     dom.setInterval(() => {
-        val (deceased, born) = if (run) GoL.tick(cells) else (Set(), Set())
-        //      dom.console.log(s"cells before: $cells")
-        cells = cells -- deceased ++ born
-        //      dom.console.log(s"cells after: $cells")
+      frame += 1
+      frameCount.textContent = s"frame $frame"
 
-        //      renderDiff(born, deceased)
-        Renderer.renderFull(cells, tile)
-    }, 100)
+      val (deceased, born) = if (run) GoL.tick(cells) else (Set(), Set())
+      cells = cells -- deceased ++ born
 
+      Renderer.renderDiff(born.asInstanceOf[Set[(Int, Int)]], deceased.asInstanceOf[Set[(Int, Int)]], tileSize)
+      //      Renderer.renderFull(cells, tileSize)
+    }, 30)
+
+    dom.onkeyup = (e: dom.KeyboardEvent) => {
+      if (e.keyCode == 32)
+        run = !run
+      dom.console.log(if (run) "running" else "paused")
+      spaceAction.textContent = if (run) "pause" else "resume"
+    }
 
   }
 }
