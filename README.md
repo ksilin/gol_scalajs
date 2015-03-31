@@ -2,7 +2,7 @@
 
 
 
-This is a simple [Game of Life]() implementation written in
+This is a simple [Game of Life](http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) implementation written in
 [Scala.js](https://www.scala-js.org/), using the [scala-js-example-app](https://github.com/sjrd/scala-js-example-app).
 
 ## Get started
@@ -36,3 +36,5 @@ JavaScript emitted by `fullOptJS`.
 * check only cells and their immediate neighborhood, not the entire min-max range
 * switch rules on key press
 * timing/benchmarking
+* save to file on key press (creating brushes on pause)
+* load saved state and use as brush

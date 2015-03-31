@@ -20,17 +20,19 @@ object GoL {
     neighborOffsets map { (a) => ((a._1 + x) -> (a._2 + y)) }
   }
 
+  def nextState(cells: Set[(Int, Int)], location: (Int, Int)): Option[Symbol] = {
+    rules(countNeighbors(cells, location._1, location._2))
+  }
 
   val toLoc: ( ((Int, Int), Option[Symbol])) => (Int, Int) = (_._1)
 
-  def isInState(state: Symbol)(cell: ((Int, Int), Option[Symbol])) = (((s: Symbol) => s == cell._2.get)(state))
-
   def tick(c: Set[(Int, Int)]): (Set[(Int, Int)], Set[(Int, Int)]) = {
-    val nextStates: Set[((Int, Int), Option[Symbol])] = locationsToCheck(c).map {
-      (loc) => (loc -> rules(countNeighbors(c, loc._1, loc._2)))
-    } filter (_._2.isDefined)
-    val deceased: Set[(Int, Int)] = nextStates filter isInState('dead) map toLoc
-    val born: Set[(Int, Int)] = nextStates filter isInState('alive) map toLoc
+    val nextStates = locationsToCheck(c).map ((loc) => (loc -> nextState(c, loc)))
+    
+    // TODO - what is faster, filtering (3 times) or grouping and fetching?
+    val stateMap = nextStates groupBy((a:((Int, Int), Option[Symbol])) => a._2)
+    val deceased = stateMap.getOrElse(Some('dead), Set()) map toLoc
+    val born = stateMap.getOrElse(Some('alive), Set()) map toLoc
     (deceased, born)
   }
 
