@@ -25,7 +25,7 @@ object GoLApp extends js.JSApp {
       Set(locations.toSeq: _*)
     }
 
-    var cells: Set[(Int, Int)] = createRandomCells // Set((1, 1), (1, 2), (2, 2), (3, 3), (4, 4), (5, 6), (12, 15), (3, 6), (3, 7), (3, 8))
+    var cells: Set[(Int, Int)] = createRandomCells
 
     Page.clear()
     dom.setInterval(() => {
@@ -44,6 +44,12 @@ object GoLApp extends js.JSApp {
         run = !run
       dom.console.log(if (run) "running" else "paused")
       spaceAction.textContent = if (run) "pause" else "resume"
+    }
+
+    Page.sandbox.onmouseup = (e: dom.MouseEvent) => {
+      val x: Int = (e.clientX / tileSize).toInt
+      val y: Int = (e.clientY / tileSize).toInt
+      cells = cells ++ Set((x -> y), (x + 1 -> y), (x -> (y + 1)), (x + 1 -> (y + 1)))
     }
 
   }
