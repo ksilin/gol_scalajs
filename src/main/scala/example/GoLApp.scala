@@ -19,9 +19,9 @@ object GoLApp extends js.JSApp {
     var frame = 0
     val frameCount = Util.getElem[html.Paragraph]("frameCount")
 
-    def createRandomCells = {
+    val createRandomCells = {
       val rnd = new scala.util.Random
-      val locations = (0 to (tilesX * tilesY)).toList.map { (_) => (rnd.nextInt(tilesX.toInt), rnd.nextInt(tilesY.toInt)) }
+      val locations = (0 to (tilesX * tilesY)).toList.map(_ => (rnd.nextInt(tilesX.toInt), rnd.nextInt(tilesY.toInt)))
       Set(locations.toSeq: _*)
     }
 
@@ -36,6 +36,7 @@ object GoLApp extends js.JSApp {
       cells = cells -- deceased ++ born
 
       Renderer.renderDiff(born.asInstanceOf[Set[(Int, Int)]], deceased.asInstanceOf[Set[(Int, Int)]], tileSize)
+      //      Renderer.renderDiff(born, deceased, tileSize)
       //      Renderer.renderFull(cells, tileSize)
     }, 30)
 

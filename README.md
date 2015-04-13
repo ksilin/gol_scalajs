@@ -38,3 +38,4 @@ JavaScript emitted by `fullOptJS`.
 * timing/benchmarking
 * save to file on key press (creating brushes on pause)
 * load saved state and use as brush
+* add a scalajs.fiddle version in one file

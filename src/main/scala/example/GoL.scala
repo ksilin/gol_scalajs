@@ -13,7 +13,7 @@ object GoL {
   val rules = Map(3 -> Some('alive), 2 -> None).withDefaultValue(Some('dead))
 
   def countNeighbors(c: Set[(Int, Int)], x: Int, y: Int): Int = {
-    neighborIndices(x, y).filter(c.contains(_)).length
+    neighborIndices(x, y).count(c.contains(_))
   }
 
   def neighborIndices(x: Int, y: Int): IndexedSeq[(Int, Int)] = {
