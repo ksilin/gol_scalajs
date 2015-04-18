@@ -32,7 +32,7 @@ object GoLApp extends js.JSApp {
       frame += 1
       frameCount.textContent = s"frame $frame"
 
-      val (deceased, born) = if (run) GoL.tick(cells) else (Set(), Set())
+      val (deceased, born): (Set[(Int, Int)], Set[(Int, Int)]) = if (run) GoL.tick(cells) else (Set(), Set())
       cells = cells -- deceased ++ born
 
       Renderer.renderDiff(born.asInstanceOf[Set[(Int, Int)]], deceased.asInstanceOf[Set[(Int, Int)]], tileSize)

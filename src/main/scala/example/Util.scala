@@ -2,7 +2,7 @@ package example
 
 import org.scalajs.dom
 import dom.html
-import scala.concurrent.{Promise, Future}
+import scala.concurrent.{ Promise, Future }
 import scala.util.Try
 
 /**
@@ -11,11 +11,11 @@ import scala.util.Try
  */
 object Util {
 
-  def defer[T](t: =>T): Future[T] = {
+  def defer[T](t: => T): Future[T] = {
     val p = Promise[T]()
     scala.scalajs.concurrent.JSExecutionContext.queue.execute(
-      new Runnable{
-        def run(): Unit = p.complete(Try(t))
+      new Runnable {
+        def run(): Unit = { p.complete(Try(t)); () }
       }
     )
     p.future
@@ -40,19 +40,19 @@ object Util {
    * Fakes a form submit, the only way that
    * you can do a HTTP request + navigation
    */
-  object Form{
+  object Form {
     def post(path: String, args: (String, String)*): Unit = {
-      ajax("post", path, args:_*)
+      ajax("post", path, args: _*)
     }
     def get(path: String, args: (String, String)*): Unit = {
-      ajax("get", path, args:_*)
+      ajax("get", path, args: _*)
     }
     def ajax(method: String, path: String, args: (String, String)*): Unit = {
       val form = dom.document.createElement("form").asInstanceOf[html.Form]
       form.setAttribute("method", method)
       form.setAttribute("action", path)
 
-      for((k, v) <- args){
+      for ((k, v) <- args) {
         val hiddenField = dom.document.createElement("input")
         hiddenField.setAttribute("type", "hidden")
         hiddenField.setAttribute("name", k)

@@ -24,13 +24,13 @@ object GoL {
     rules(countNeighbors(cells, location._1, location._2))
   }
 
-  val toLoc: ( ((Int, Int), Option[Symbol])) => (Int, Int) = (_._1)
+  val toLoc: (((Int, Int), Option[Symbol])) => (Int, Int) = (_._1)
 
   def tick(c: Set[(Int, Int)]): (Set[(Int, Int)], Set[(Int, Int)]) = {
-    val nextStates = locationsToCheck(c).map ((loc) => (loc -> nextState(c, loc)))
-    
+    val nextStates = locationsToCheck(c).map((loc) => (loc -> nextState(c, loc)))
+
     // TODO - what is faster, filtering (3 times) or grouping and fetching?
-    val stateMap = nextStates groupBy((a:((Int, Int), Option[Symbol])) => a._2)
+    val stateMap = nextStates groupBy ((a: ((Int, Int), Option[Symbol])) => a._2)
     val deceased = stateMap.getOrElse(Some('dead), Set()) map toLoc
     val born = stateMap.getOrElse(Some('alive), Set()) map toLoc
     (deceased, born)

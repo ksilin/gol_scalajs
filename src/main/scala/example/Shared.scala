@@ -2,7 +2,7 @@ package example
 
 import scala.annotation.ClassfileAnnotation
 
-object Shared{
+object Shared {
   val prelude =
     """
       |import scalatags.JsDom.all._
@@ -24,11 +24,11 @@ object Shared{
 
   val gistId = "9443f8e0ecc68d1058ad"
 
-//  val url = "http://www.scala-js-fiddle.com"
-    val url = "http://localhost:8080"
+  //  val url = "http://www.scala-js-fiddle.com"
+  val url = "http://localhost:8080"
 }
 
-trait Api{
+trait Api {
   def fastOpt(txt: String): (String, Option[String])
   def fullOpt(txt: String): (String, Option[String])
   def export(compiled: String, source: String): String
