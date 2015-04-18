@@ -12,57 +12,37 @@ import scalatags.JsDom.all._
  */
 @JSExport
 object Page {
-  val fiddlePrelude = Shared.prelude
+
+  val DefaultWidth = 1000
+  val DefaultHeight = 600
+  val FillRectDim = 10000
+
   val fiddleUrl = Shared.url
-  val fiddleGistId = Shared.gistId
 
-  def red = span(color := "#E95065")
-  def blue = span(color := "#46BDDF")
-  def green = span(color := "#52D273")
-  def yellow = span(color := "#E5C453")
-  def orange = span(color := "#E57255")
+  lazy val red = span(color := "#E95065")
+  lazy val blue = span(color := "#46BDDF")
+  lazy val green = span(color := "#52D273")
+  lazy val yellow = span(color := "#E5C453")
+  lazy val orange = span(color := "#E57255")
 
-  def sandbox = Util.getElem[html.Div]("playground")
-  def canvas = Util.getElem[html.Canvas]("canvas")
-  def renderer = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  //  def output = Util.getElem[html.Div]("output")
-  //  def logspam = Util.getElem[html.Pre]("logspam")
-  //  def source = Util.getElem[html.Div]("source")
+  def sandbox: html.Div = Util.getElem[html.Div]("playground")
 
-  def println(ss: Modifier*) = {
-    print(div(ss: _*))
-  }
+  def canvas: html.Canvas = Util.getElem[html.Canvas]("canvas")
 
-  def print(ss: Modifier*) = {
-    //    ss.foreach(_.applyTo(output))
-    //    output.scrollTop = output.scrollHeight - output.clientHeight
-  }
+  def renderer: dom.CanvasRenderingContext2D = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
-  def clear() = {
-    //    output.innerHTML = ""
-    canvas.width = 1000
-    canvas.height = 600
+  def clear(): Unit = {
+    canvas.width = DefaultWidth
+    canvas.height = DefaultHeight
     val tmp = renderer.fillStyle
     renderer.fillStyle = "rgb(0, 0, 0)"
-    renderer.fillRect(0, 0, 10000, 10000)
+    renderer.fillRect(0, 0, FillRectDim, FillRectDim)
     renderer.fillStyle = tmp
   }
 
-  def scroll(px: Int) = {
+  def scroll(px: Int): Unit = {
     dom.console.log("Scrolling", px)
-    //    output.scrollTop = output.scrollTop + px
   }
-
-  def logln(s: Modifier*): Unit = {
-    log(div(s: _*))
-  }
-
-  def log(s: Modifier*): Unit = {
-    //    s.foreach(_.applyTo(logspam))
-    //    logspam.scrollTop = 1000000000
-  }
-
-  //  val compiled = Util.getElem[html.Div]("compiled").textContent
 
   @JSExport
   def exportMain(): Unit = {

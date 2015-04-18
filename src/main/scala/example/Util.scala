@@ -24,7 +24,7 @@ object Util {
   /**
    * Creates a HTML node from the given string
    */
-  def createDom(s: String) = {
+  def createDom(s: String): dom.raw.Node = {
     val parser = new dom.DOMParser
     dom.document.adoptNode(
       parser.parseFromString(s, "text/html").documentElement
@@ -34,7 +34,7 @@ object Util {
    * Gets the element from the given ID and casts it,
    * shortening that common pattern
    */
-  def getElem[T](id: String) = dom.document.getElementById(id).asInstanceOf[T]
+  def getElem[T](id: String): T = dom.document.getElementById(id).asInstanceOf[T]
 
   /**
    * Fakes a form submit, the only way that
